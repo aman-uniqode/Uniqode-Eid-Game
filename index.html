@@ -250,7 +250,7 @@ function resize() {
   canvas.style.width  = W + 'px';
   canvas.style.height = H + 'px';
   ctx.scale(devicePixelRatio, devicePixelRatio);
-  basket.y = H - 90;
+  basket.y = H - 180;
   basket.w = Math.max(60, Math.min(100, W * 0.18));
   if (basket.x > W - basket.w/2) basket.x = W - basket.w/2;
   regen_bg();
@@ -767,6 +767,22 @@ canvas.addEventListener('mousemove', e => {
     basket.x = Math.max(basket.w/2, Math.min(W - basket.w/2, e.clientX));
   }
 });
+
+// Mobile: direct finger drag on canvas tracks basket position
+canvas.addEventListener('touchmove', e => {
+  e.preventDefault();
+  if (state === 'playing') {
+    // Stop any button-driven movement when finger is dragging
+    moveDir = 0; moveSpeed = 0;
+    basket.x = Math.max(basket.w/2, Math.min(W - basket.w/2, e.touches[0].clientX));
+  }
+}, { passive: false });
+canvas.addEventListener('touchstart', e => {
+  if (state === 'playing') {
+    moveDir = 0; moveSpeed = 0;
+    basket.x = Math.max(basket.w/2, Math.min(W - basket.w/2, e.touches[0].clientX));
+  }
+}, { passive: true });
 
 // Mobile: tap-and-hold left/right arrow buttons
 // Uses smooth acceleration — starts slow, speeds up while held
